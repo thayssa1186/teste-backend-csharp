@@ -27,9 +27,11 @@ namespace Infrastructure.TorreHanoi.Log
 
             foreach (var tipoLog in tiposLogs)
             {
-                if(Enum.TryParse(tipoLog, true, out TipoLog logDisponivel))
+                TipoLog logDisponiveis;
+
+                if (Enum.TryParse(tipoLog, true, out logDisponiveis))
                 {
-                    logsDisponiveis.Add(logDisponivel);
+                    logsDisponiveis.Add(logDisponiveis);
                 }
             }
 

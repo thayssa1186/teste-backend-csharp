@@ -9,7 +9,9 @@ namespace Application.TorreHanoi.Validation
         {
             var response = new ObterImagemProcessoPorResponse();
 
-            if (Guid.TryParse(id, out _))
+            var _result = new Guid();
+
+            if (Guid.TryParse(id, out _result))
             {
                 return response;
             }

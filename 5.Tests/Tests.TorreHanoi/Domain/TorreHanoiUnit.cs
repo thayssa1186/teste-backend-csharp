@@ -23,7 +23,18 @@ namespace Tests.TorreHanoi.Domain
         [TestCategory(CategoriaTeste)]
         public void Construtor_Deve_Retornar_Sucesso()
         {
-            Assert.Fail();
+            var torre = new global::Domain.TorreHanoi.TorreHanoi(3, _mockLogger.Object);
+
+            Assert.IsNotNull(torre);
+            Assert.IsNotNull(torre.Destino);
+            Assert.IsNotNull(torre.Origem);
+            Assert.IsNotNull(torre.Intermediario);
+            Assert.AreEqual(torre.Origem.Tipo, global::Domain.TorreHanoi.TipoPino.Origem);
+            Assert.AreEqual(torre.Destino.Tipo, global::Domain.TorreHanoi.TipoPino.Destino);
+            Assert.AreEqual(torre.Intermediario.Tipo, global::Domain.TorreHanoi.TipoPino.Intermediario);
+            Assert.AreEqual(torre.Intermediario.Discos.Count, 0);
+            Assert.AreEqual(torre.Destino.Discos.Count, 0);
+            Assert.AreEqual(torre.Origem.Discos.Count, 3);
         }
 
         [TestMethod]

@@ -9,6 +9,7 @@ namespace Domain.TorreHanoi
     {
         private readonly ILogger _log;
 
+
         public TorreHanoi(int numeroDiscos, ILogger log)
         {
             _log = log;
@@ -39,7 +40,10 @@ namespace Domain.TorreHanoi
             _log.Logar($"TorreHanoi id {Id} -> Iniciando Processamento", TipoLog.Fluxo);
             try
             {
-                Resolver(Discos.Count, Origem, Intermediario, Destino);
+                if (Discos.Count >= 1)
+                {
+                    Resolver(Discos.Count, Origem, Intermediario, Destino);
+                }               
 
                 Status = TipoStatus.FinalizadoSucesso;
                 _log.Logar($"TorreHanoi id {Id} -> Processo finalizado com sucesso", TipoLog.Fluxo);
@@ -57,14 +61,23 @@ namespace Domain.TorreHanoi
 
         private void Resolver(int numeroDiscosRestante, Pino origem, Pino intermediario, Pino destino)
         {
-            if (numeroDiscosRestante <= 1)
+            
+            try
             {
-                return;
-            }
+                if (numeroDiscosRestante >= 0)
+                {
+                    Resolver(numeroDiscosRestante - 1, origem, destino, intermediario);
+                    MoverDisco(origem, destino);
+                    Resolver(numeroDiscosRestante - 1, intermediario, origem, destino);
+                }
 
-            Resolver(numeroDiscosRestante - 1, origem, destino, intermediario);
-            MoverDisco(origem, destino);
-            Resolver(numeroDiscosRestante - 1, intermediario, origem, destino);
+            }
+            catch(Exception ex)
+            {
+                Status = TipoStatus.FinalizadoErro;
+                _log.Logar($"TorreHanoi disco {numeroDiscosRestante}-> Ocorreu um erro ao realizar movimento o processo. Ex: {ex.Message}", TipoLog.Fluxo);
+            }
+           
         }
 
         private void MoverDisco(Pino pinoInicio, Pino pinoFim)

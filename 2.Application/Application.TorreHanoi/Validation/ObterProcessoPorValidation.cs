@@ -8,8 +8,9 @@ namespace Application.TorreHanoi.Validation
         internal static ObterProcessoPorResponse ValidationProcesso(this string id)
         {
             var response = new ObterProcessoPorResponse();
+            var _result = new Guid();
 
-            if (Guid.TryParse(id, out var _))
+            if (Guid.TryParse(id, out _result))
             {
                 return response;
             }
