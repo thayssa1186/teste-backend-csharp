@@ -64,7 +64,7 @@ namespace Domain.TorreHanoi
             
             try
             {
-                if (numeroDiscosRestante >= 0)
+                if (numeroDiscosRestante >= 1)
                 {
                     Resolver(numeroDiscosRestante - 1, origem, destino, intermediario);
                     MoverDisco(origem, destino);

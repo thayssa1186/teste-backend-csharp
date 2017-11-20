@@ -8,6 +8,9 @@ using Infrastructure.TorreHanoi.ImagemHelper;
 using Infrastructure.TorreHanoi.Log;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
+using System.Threading;
+using System.Linq;
+using Domain.TorreHanoi;
 
 namespace Tests.TorreHanoi.Application
 {
@@ -17,21 +20,23 @@ namespace Tests.TorreHanoi.Application
         private const string CategoriaTeste = "Application/Service/TorreHanoi";
 
         private ITorreHanoiApplicationService _service;
+        private Mock<ILogger> _mockLogger;
 
         [TestInitialize]
         public void SetUp()
         {
-            var mockLogger = new Mock<ILogger>();
-            mockLogger.Setup(s => s.Logar(It.IsAny<string>(), It.IsAny<TipoLog>()));
+
+            _mockLogger = new Mock<ILogger>();
+            _mockLogger.Setup(s => s.Logar(It.IsAny<string>(), It.IsAny<TipoLog>()));
 
             var mockDesignerService = new Mock<IDesignerService>();
 
             var mockTorreHanoiDomainService = new Mock<ITorreHanoiDomainService>();
             mockTorreHanoiDomainService.Setup(s => s.Criar(It.IsAny<int>())).Returns(Guid.NewGuid);
-            mockTorreHanoiDomainService.Setup(s => s.ObterPor(It.IsAny<Guid>())).Returns(() => new global::Domain.TorreHanoi.TorreHanoi(3, mockLogger.Object));
-            mockTorreHanoiDomainService.Setup(s => s.ObterTodos()).Returns(() => new List<global::Domain.TorreHanoi.TorreHanoi> { new global::Domain.TorreHanoi.TorreHanoi(3, mockLogger.Object) });
+            mockTorreHanoiDomainService.Setup(s => s.ObterPor(It.IsAny<Guid>())).Returns(() => new global::Domain.TorreHanoi.TorreHanoi(3, _mockLogger.Object));
+            mockTorreHanoiDomainService.Setup(s => s.ObterTodos()).Returns(() => new List<global::Domain.TorreHanoi.TorreHanoi> { new global::Domain.TorreHanoi.TorreHanoi(3, _mockLogger.Object) });
 
-            _service = new TorreHanoiApplicationService(mockTorreHanoiDomainService.Object, mockLogger.Object, mockDesignerService.Object);
+            _service = new TorreHanoiApplicationService(mockTorreHanoiDomainService.Object, _mockLogger.Object, mockDesignerService.Object);
         }
 
         [TestMethod]
@@ -79,7 +84,20 @@ namespace Tests.TorreHanoi.Application
         [TestCategory(CategoriaTeste)]
         public void ObterImagemProcessoPor_Deve_Retornar_Imagem()
         {
-            Assert.Fail();
+           
+            var addproces = _service.AdicionarNovoPorcesso(3);
+            var torre = new global::Domain.TorreHanoi.TorreHanoi(3, _mockLogger.Object);
+            torre.Processar();
+
+            Assert.AreEqual(torre.Status, TipoStatus.FinalizadoSucesso);
+
+            var result =  _service.ObterImagemProcessoPor(addproces.IdProcesso.ToString());
+
+            Assert.IsNotNull(result);
+            Assert.AreEqual(result.StatusCode, HttpStatusCode.OK);
+            Assert.IsTrue(result.IsValid);
+            Assert.IsTrue(result.MensagensDeErro.Count == 0);
+
         }
     }
 }
